@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>情緒小卡 Emotion Cards</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f1f5f9;
+      padding: 16px;
+      color: #1e293b;
+    }
+    .container { max-width: 480px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 20px; }
+    header h1 { font-size: 1.5rem; margin-bottom: 4px; }
+    header p { color: #64748b; font-size: 0.9rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 16px 8px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+    }
+    .happy { background: #f59e0b; }
+    .excited { background: #f97316; }
+    .angry { background: #ef4444; }
+    .scared { background: #8b5cf6; }
+    .sad { background: #3b82f6; }
+    .bored { background: #64748b; }
+    .calm { background: #22c55e; }
+    .shy { background: #ec4899; }
+    .surprised { background: #14b8a6; }
+    .anxious { background: #f97316; }
+
+    .academy {
+      display: block;
+      text-align: center;
+      background: #0f172a;
+      color: white;
+      text-decoration: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal.active { display: flex; }
+    .modal-box {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .modal-box h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .modal-box p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>情緒小卡</h1>
+      <p>Emotion Cards</p>
+      <p style="font-size:0.8rem;color:#94a3b8;margin-top:4px;">正視情緒由認識情緒開始</p>
+    </header>
+
+    <div class="grid">
+      <button class="btn happy" onclick="show('happy')">開心 Happy</button>
+      <button class="btn excited" onclick="show('excited')">興奮 Excited</button>
+      <button class="btn angry" onclick="show('angry')">憤怒 Angry</button>
+      <button class="btn scared" onclick="show('scared')">害怕 Scared</button>
+      <button class="btn sad" onclick="show('sad')">傷心 Sad</button>
+      <button class="btn bored" onclick="show('bored')">無聊 Bored</button>
+      <button class="btn calm" onclick="show('calm')">平靜 Calm</button>
+      <button class="btn shy" onclick="show('shy')">害羞 Shy</button>
+      <button class="btn surprised" onclick="show('surprised')">驚訝 Surprised</button>
+      <button class="btn anxious" onclick="show('anxious')">焦慮 Anxious</button>
+    </div>
+
+    <a href="https://hypnosistrainingacademy.hk/" class="academy" target="_blank">
+      了解更多 · 香港催眠訓練學院
+    </a>
+  </div>
+
+  <div class="modal" id="modal" onclick="closeModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <button class="close" onclick="closeModal()">×</button>
+      <div id="content"></div>
+    </div>
+  </div>
+
+  <script>
+    const data = {
+      happy: {
+        title: "Happy / 開心",
+        html: `<p>開心可能代表你而家感到被滿足、被肯定或者被愛<br>Feeling happy may mean you feel satisfied, appreciated, or loved right now.</p>
+               <p>同身邊嘅人分享一件令你開心嘅事讓快樂加倍<br>Share one happy thing with someone around you and let the joy grow.</p>`
+      },
+      excited: {
+        title: "Excited / 興奮",
+        html: `<p>興奮可能代表你對即將發生嘉事充充滿期待<br>Feeling excited may mean you are looking forward to something that is about to happen.</p>
+               <p>嘗試將興奮變成動力去做完成一件小目標<br>Try turn the excitement into energy to do one small thing.</p>`
+      },
+      angry: {
+        title: "Angry / 憤怒",
+        html: `<p>憤怒可能代表你哦底線被侵犯、感到被不公平對待或者需求被忽視<br>Feeling angry may mean your boundaries were crossed, you feel treated unfairly, or your needs are ignored.</p>
+               <p>細心品嚐享受呢份平靜讓身體記得這種感覺<br>Take a deep breaths, give yourself time to cool down, then express your feelings and boundaries clearly.</p>`
+      },
+      scared: {
+        title: "Scared / 害怕",
+        html: `<p>害怕可能代表你正面對陌生嘅環境和挑戰 或者你需要更多嘅安全感<br>Feeling scared may mean you are facing an unfamiliar situation, a challenge, or simply need more safety.</p>
+               <p>搵一個信任嘅人陪住你 或者去一個令你覺得安全嘅空間<br>Take a deep breaths, Find a trusted person to be with you, or retreat to a safe and secure space.</p>`
+      },
+      sad: {
+        title: "Sad / 傷心",
+        html: `<p>傷心可能代表你失去重要嘅人或期望落空<br>Feeling sad may mean you have lost something or someone important, or your expectation was not met.</p>
+               <p>容許自己傷心一會兒 傷心代表我們對這個人還是看待得夠重要<br>Allow yourself to feel sad for a while; feeling sad means that this person (or thing) was truly important to us.</p>`
+      },
+      bored: {
+        title: "Bored / 無聊",
+        html: `<p>無聊可能代表你需要新的刺激或目標<br>Feeling bored may mean you need some new stimulation or a goal.</p>
+               <p>問自己「而家我想試什麼新東西嗎？」然後做一件從沒做過的小行動<br>Ask yourself “What new thing would I like to try right now?” and then do one small action you never try.</p>`
+      },
+      calm: {
+        title: "Calm / 平靜",
+        html: `<p>平靜可能代表你而家感覺安全同放鬆<br>Feeling calm may mean you feel safe and relaxed right now.</p>
+               <p>細心品嚐享受呢份平靜讓身體記得這種感覺<br>Enjoy this calm feeling. You can gently smile and let your body remember this sensation.</p>`
+      },
+      shy: {
+        title: "Shy / 害羞",
+        html: `<p>害羞可能代表你對被注意感到唔在意<br>Feeling shy may mean you feel uncomfortable being noticed.</p>
+               <p>深呼吸提醒自己「我可以慢慢來，唔使急」<br>Take slow deep breaths and remind yourself “I can take my time, no need to rush.”</p>`
+      },
+      surprised: {
+        title: "Surprised / 驚訝",
+        html: `<p>驚訝可能代表你有新發現或遇到意料之外嘅事<br>Feeling surprised may mean you have made a new discovery or encountered something unexpected.</p>
+               <p>輕輕搖一搖雙手同身體將嚇一跳嘅感覺放出來<br>Shake your hands and body to release the startled feeling.</p>`
+      },
+      anxious: {
+        title: "Anxious / 焦慮",
+        html: `<p>焦慮可能代表你覺得事情失去控制或為未來感到不安<br>Feeling anxious may mean you feel things are out of control or uneasy about the future.</p>
+               <p>嘗試搵出身邊5樣見到嘅嘢,4樣聽嘅聲,3樣摸到嘅嘢 2樣聽到嘅聲音同1樣聞到嘅味道<br>Try to notice 5 things you can see around you, 4 sounds you can hear, 3 things you can touch, 2 more sounds you can hear, and 1 smell you can notice.</p>`
+      }
+    };
+
+    function show(key) {
+      document.getElementById('content').innerHTML = `<h2>${data[key].title}</h2>` + data[key].html;
+      document.getElementById('modal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>
